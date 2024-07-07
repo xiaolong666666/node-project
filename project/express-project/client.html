@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <!-- jquery -->
+    <script>
+      $(document).ready(() => {
+        $("#jsonp").on("click", () => {
+          $.ajax({
+            method: "get",
+            url: "http:127.0.0.1/api/jsonp",
+            dataType: "jsonp",
+            success: function (response) {
+              console.log(response);
+            },
+          });
+        });
+      });
+    </script>
+    <!-- 手写 -->
+    <script>
+      baseUrl = "http:127.0.0.1/api/jsonp";
+
+      function fetch() {
+        const random = Math.random().toString(36).substr(2, 6);
+        const src = `${baseUrl}?callback=${random}`;
+        const head = document.getElementsByTagName("head")[0];
+        const jsonpScript = document.createElement("script");
+        jsonpScript.src = src;
+        window[random] = function (params) {
+          this[random] = null;
+          console.log({ params });
+          head.removeChild(jsonpScript);
+        };
+
+        head.appendChild(jsonpScript);
+      }
+
+      window.onload = function () {
+        const fetchButton = document.querySelector("#fetch");
+        fetchButton.addEventListener("click", fetch, false);
+      };
+    </script>
+  </head>
+  <body>
+    <button id="jsonp">jsonp</button>
+    <button id="fetch">fetch</button>
+  </body>
+</html>
